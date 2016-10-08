@@ -19,9 +19,11 @@ import hu.daq.wp.fx.screens.MatchScreen;
 import hu.daq.wp.fx.screens.SettingsScreen;
 import hu.daq.wp.fx.screens.TeamsScreen;
 import hu.daq.wp.matchorganizer.OrganizerBuilder;
+
 import java.io.FileNotFoundException;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.thrift.transport.TTransportException;
@@ -40,19 +42,21 @@ public class WPTest extends Application {
         SettingsHandler settings = ServiceHandler.getInstance().getSettings();
         settings.loadProps("settings.cfg");
         BasicConfigurator.configure();
-        String jsonstr = "{\"numlegs\":2,\"legduration\":3000,\"numovertimes\":0,\"overtimeduration\":20000}";    
+        String jsonstr = "{\"numlegs\":2,\"legduration\":30000,\"numovertimes\":0,\"overtimeduration\":20000}";    
         LoginService ls = LoginService.getInst();
         String dburi = "jdbc:postgresql://"
                 + settings.getProperty("database_url") + "/"
                 + settings.getProperty("database_db") + "?ssl=true&tcpKeepAlive=true&sslfactory=org.postgresql.ssl.NonValidatingFactory";
         ls.setDburi(dburi);
         MainPage root = new MainPage(LoginServiceDialogFactory.getLoginDialog(ls));
+        //root.addEventHandler(KeyEvent.KEY_PRESSED,ServiceHandler.getInstance().getKeyEventHandler());
         Postgres db = ls.getDb();
         ServiceHandler.getInstance().setDb(db);
         FileService fs = FileService.getInst();
         fs.setDb(db);
         ts = new TeamsScreen(db);
         MatchScreen ms = new MatchScreen(db);
+        ms.addEventFilter(KeyEvent.KEY_PRESSED,ServiceHandler.getInstance().getKeyEventHandler());
         SettingsScreen ss = new SettingsScreen();
         //ServiceHandler.getInstance().setThriftClient(new WPController("192.168.71.174",19999,9998));
         //Registering two way thrift (If this works...)
