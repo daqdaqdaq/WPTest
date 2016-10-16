@@ -42,7 +42,7 @@ public class WPTest extends Application {
         SettingsHandler settings = ServiceHandler.getInstance().getSettings();
         settings.loadProps("settings.cfg");
         BasicConfigurator.configure();
-        String jsonstr = "{\"numlegs\":2,\"legduration\":30000,\"numovertimes\":0,\"overtimeduration\":20000}";    
+        //String jsonstr = "{\"numlegs\":2,\"legduration\":40000,\"numovertimes\":0,\"overtimeduration\":20000}";    
         LoginService ls = LoginService.getInst();
         String dburi = "jdbc:postgresql://"
                 + settings.getProperty("database_url") + "/"
@@ -60,9 +60,9 @@ public class WPTest extends Application {
         SettingsScreen ss = new SettingsScreen();
         //ServiceHandler.getInstance().setThriftClient(new WPController("192.168.71.174",19999,9998));
         //Registering two way thrift (If this works...)
-        ServiceHandler.getInstance().setOrganizer(OrganizerBuilder.build(jsonstr, ms));   
+        //ServiceHandler.getInstance().setOrganizer(OrganizerBuilder.build(jsonstr, ms));   
         //Setting the currentphasenum to -1 to get in sync with the display
-        ServiceHandler.getInstance().getOrganizer().setCurrentPhase(-1);
+        //ServiceHandler.getInstance().getOrganizer().setCurrentPhase(-1);
         ThriftConnector<WPTalkBackServer, WPController> tc = new ThriftConnector<WPTalkBackServer, WPController>(
                 new WPTalkBackServer(ms,settings.getIntProperty("display_talkback_port")),
                 //new WPController("192.168.71.174",19999,9998));
