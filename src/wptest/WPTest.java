@@ -82,7 +82,7 @@ public class WPTest extends Application {
 
 
 
-        Scene scene = new Scene(root, 1280, 800);
+        Scene scene = new Scene(root, 1280, 700);
         ServiceHandler.getInstance().registerCleanup(primaryStage);
         primaryStage.setTitle("Eredményjelző vezérlő");
         primaryStage.setScene(scene);
