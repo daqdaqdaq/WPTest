@@ -6,6 +6,7 @@
 package wptest;
 
 import client.Postgres;
+import com.sun.javafx.css.StyleManager;
 import hu.daq.fileservice.FileService;
 import hu.daq.login.LoginService;
 import hu.daq.login.fx.LoginServiceDialogFactory;
@@ -14,13 +15,17 @@ import hu.daq.settings.SettingsHandler;
 import hu.daq.thriftconnector.client.WPController;
 import hu.daq.thriftconnector.connector.ThriftConnector;
 import hu.daq.thriftconnector.talkback.WPTalkBackServer;
+import hu.daq.wp.fx.screens.IntroductionScreen;
 import hu.daq.wp.fx.screens.MainPage;
+import hu.daq.wp.fx.screens.MainPageWMenu;
 import hu.daq.wp.fx.screens.MatchScreen;
 import hu.daq.wp.fx.screens.SettingsScreen;
 import hu.daq.wp.fx.screens.TeamsScreen;
 import hu.daq.wp.matchorganizer.OrganizerBuilder;
 
 import java.io.FileNotFoundException;
+import java.net.MalformedURLException;
+import java.nio.file.Paths;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
@@ -38,9 +43,11 @@ public class WPTest extends Application {
     TeamsScreen ts;
 
     @Override
-    public void start(Stage primaryStage) throws FileNotFoundException, TTransportException, JSONException {
+    public void start(Stage primaryStage) throws FileNotFoundException, TTransportException, JSONException, MalformedURLException {
         SettingsHandler settings = ServiceHandler.getInstance().getSettings();
         settings.loadProps("settings.cfg");
+        Application.setUserAgentStylesheet(Application.STYLESHEET_MODENA);
+        StyleManager.getInstance().addUserAgentStylesheet(Paths.get(settings.getProperty("css_path"),"controllerstyle.css").toUri().toURL().toExternalForm());        
         BasicConfigurator.configure();
         //String jsonstr = "{\"numlegs\":2,\"legduration\":40000,\"numovertimes\":0,\"overtimeduration\":20000}";    
         LoginService ls = LoginService.getInst();
@@ -48,7 +55,7 @@ public class WPTest extends Application {
                 + settings.getProperty("database_url") + "/"
                 + settings.getProperty("database_db") + "?ssl=true&tcpKeepAlive=true&sslfactory=org.postgresql.ssl.NonValidatingFactory";
         ls.setDburi(dburi);
-        MainPage root = new MainPage(LoginServiceDialogFactory.getLoginDialog(ls));
+        MainPageWMenu root = new MainPageWMenu(LoginServiceDialogFactory.getLoginDialog(ls));
         //root.addEventHandler(KeyEvent.KEY_PRESSED,ServiceHandler.getInstance().getKeyEventHandler());
         Postgres db = ls.getDb();
         ServiceHandler.getInstance().setDb(db);
@@ -58,6 +65,7 @@ public class WPTest extends Application {
         MatchScreen ms = new MatchScreen(db);
         ms.addEventFilter(KeyEvent.KEY_PRESSED,ServiceHandler.getInstance().getKeyEventHandler());
         SettingsScreen ss = new SettingsScreen();
+        IntroductionScreen is = new IntroductionScreen(db);
         //ServiceHandler.getInstance().setThriftClient(new WPController("192.168.71.174",19999,9998));
         //Registering two way thrift (If this works...)
         //ServiceHandler.getInstance().setOrganizer(OrganizerBuilder.build(jsonstr, ms));   
@@ -89,7 +97,9 @@ public class WPTest extends Application {
         primaryStage.show();
         root.addScreen(ts,"Csapatok/játékosok");
         root.addScreen(ms,"Meccs");
+        root.addScreen(is,"bemutatás");           
         root.addScreen(ss,"Beállítások");        
+        
     }
 
     /**
