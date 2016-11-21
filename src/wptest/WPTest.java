@@ -22,7 +22,6 @@ import hu.daq.wp.fx.screens.MatchScreen;
 import hu.daq.wp.fx.screens.SettingsScreen;
 import hu.daq.wp.fx.screens.TeamsScreen;
 import hu.daq.wp.matchorganizer.OrganizerBuilder;
-
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.nio.file.Paths;
